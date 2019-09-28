@@ -1,0 +1,29 @@
+sudo apt-get update
+
+sudo apt-get upgrade
+
+sudo apt-get install python3-dev python3-pip
+
+sudo python3 -m pip install --upgrade pip setuptools wheel
+
+sudo pip3 install Adafruit_DHT
+
+sudo apt-get install sqlite3
+
+# dentro del repo IoT
+~/IoT $ sqlite3 sensordata.db
+
+# habilitar SPI dentro de las opciones avanzadas de la raspi
+sudo raspi-config
+
+# clonar afuera de la carpeta e instalarlo
+cd ~
+git clone git://github.com/doceme/py-spidev
+cd py-spidev/
+sudo python3 setup.py install
+
+# habilitar Camara dentro de las opciones avanzadas de la raspi
+sudo raspi-config
+sudo apt-get install python3-picamera
+
+

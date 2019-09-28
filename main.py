@@ -10,6 +10,7 @@
 # https://www.youtube.com/watch?v=qw29egj5o9w
 # http://www.pibits.net/code/read-ldr-raspberry-pi-using-mcp3008.php
 # https://www.raspberrypi-spy.co.uk/2013/10/analogue-sensors-on-the-raspberry-pi-using-an-mcp3008/
+# https://geekytheory.com/tutorial-raspberry-pi-uso-de-picamera-con-python
 
 import _thread
 import spidev

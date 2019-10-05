@@ -20,13 +20,14 @@ import time
 import math
 import sqlite3
 from picamera import PiCamera
+from datetime import datetime
 
 # ------------------------ Settings & Variables ------------------------
 spi = spidev.SpiDev() # SPI para leer entradas analogicas
 spi.open(0,0)
 spi.max_speed_hz = 1000000
 camera = PiCamera()
-camera.rotation = 180
+# camera.rotation = 180
 DHT_SENSOR = Adafruit_DHT.DHT22
 DHT_PIN = 4 # GPIO 4
 TABLAS = ('SENSORES', 'CAMARA', )
@@ -55,11 +56,11 @@ def create_structures_db(connection):
 				file BLOB,
 				plant_type TEXT,
 				plant_name TEXT,
-				status TEXT,				
+				status TEXT,
 				fecha TEXT); ''')
 	except Error as e:
 		print(e)
-		
+
 
 def create_connection(db_file):
 	# Se crea o si existe se conecta a la base
@@ -87,16 +88,16 @@ def save_sensors_data():
 	err1 = 'OK'
 	err2 = 'OK'
 	err3 = 'OK'
-		
+
 	# Validaciones de lecturas
 	if temp is not None:
 		temp = round(temp, 1)
 		if temp > 80 or temp < -40:
-			err1 = 'ERR_TEMP_2' # Temperatura incoherente del DHT22			
+			err1 = 'ERR_TEMP_2' # Temperatura incoherente del DHT22
 	else:
 		err1 = 'ERR_TEMP_1' # Failed to retrieve data from humidity sensor
 		temp = 'XXXX' # Sacar para no mostrar en el print
-		
+
 	if luz is not None:
 		if luz > 1023 or luz < 0:
 			err2 = 'ERR_LUZ_2' # Lectura incoherente
@@ -105,7 +106,7 @@ def save_sensors_data():
 	else:
 		err2 = 'ERR_LUZ_1' # No se pudo leer el LDR
 		luz = 'XXXX' # Sacar para no mostrar en el print
-		
+
 	if hume is not None:
 		if hume > 1023 or hume < 0:
 			err3 = 'ERR_HUME_2' # Lectura incoherente
@@ -114,14 +115,14 @@ def save_sensors_data():
 	else:
 		err3 = 'ERR_HUME_1' # No se puede leer el Soil Moisture
 		hume = 'XXXX' # Sacar para no mostrar en el print
-	
+
 	print("================================================")
 	print("Temp: {:4}  - STATUS: {}".format(temp, err1))
 	print("Hume: {:4}  - STATUS: {}".format(hume, err2))
 	print("Luz: {:5}  - STATUS: {}".format(luz, err3))
-	
+
 	fecha = time.strftime('%Y%m%d%H%M%S')
-		
+
 	conn = sqlite3.connect(RASPY_DB)
 	conn.row_factory = sqlite3.Row
 	conn.cursor().execute(''' insert into '''+ TABLAS[0] + '''(temp, 
@@ -130,10 +131,10 @@ def save_sensors_data():
 	conn.commit()
 	conn.close()
 
-	
+
 def active_actuators():
 	print('TODO = Desarrollar este metodo.')
-	
+
 def manage_sensors_and_actuators():
 	while True:
 		save_sensors_data();
@@ -142,7 +143,8 @@ def manage_sensors_and_actuators():
 
 def take_and_analyze_photo():
 	while True:
-		my_file = open('my_image.jpg', 'wb')
+		filename = './fotos/' + datetime.now().strftime("%Y%m%d%H%M%S") + '.jpg'
+		my_file = open(filename, 'wb')
 		camera.start_preview()
 		# prender lampara como flash
 		time.sleep(2)
@@ -153,7 +155,7 @@ def take_and_analyze_photo():
 
 """ ---------------------------------------------------------------- """
 
-create_connection(RASPY_DB)	
+create_connection(RASPY_DB)
 
 try:
    _thread.start_new_thread( manage_sensors_and_actuators, () )

@@ -8,7 +8,7 @@ class FirestoreManager:
         self.doc_ref = None
         firebase_admin.initialize_app(credentials.Certificate(cred))
 
-    def get_doc(self, doc_id=None):
+    def retrieve_doc(self, doc_id=None):
         self.doc_ref = self.col_ref.document(doc_id)
         return self.doc_ref
 

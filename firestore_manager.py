@@ -3,7 +3,7 @@ from firebase_admin import credentials, firestore
 
 
 class FirestoreManager:
-    def __init__(self, cred, conn):
+    def __init__(self, cred, doc_id):
         firebase_admin.initialize_app(credentials.Certificate(cred))
         self.doc_ref = firestore.client().collection(u'cultivos').document(doc_id)
 

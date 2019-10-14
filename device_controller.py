@@ -1,7 +1,12 @@
+import RPi.GPIO as GPIO
+
+
 class DeviceController:
     def __init__(self, pin):
         self.pin = pin
+        self.state = 0
         self.conditions = []
+        GPIO.setup(self.pin, GPIO.OUT)
 
     def add_condition(self, condition):
         self.conditions.append(condition)
@@ -13,7 +18,8 @@ class DeviceController:
         self.set_state(0)
 
     def get_state(self):
-        pass
+        return self.state
 
     def set_state(self, state):
-        pass
+        GPIO.output(self.pin, state)
+        self.state = state

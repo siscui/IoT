@@ -1,4 +1,5 @@
 import spidev
+import RPi.GPIO as GPIO
 from uuid import getnode
 
 from humidity_sensor import HumiditySensor
@@ -27,6 +28,7 @@ if __name__ == '__main__':
     spi = spidev.SpiDev()
     spi.open(0, 0)
     spi.max_speed_hz = 1000000
+    GPIO.setmode(GPIO.BOARD)
     cred = './credentials.json'
 
     conn = DbConnection(db_name='local_db')

@@ -1,0 +1,41 @@
+from math import cos, pi
+from threading import Thread
+from time import sleep
+
+
+class HumiditySensor(Thread):
+    def __init__(self, spi, pin, conn, interval):
+        Thread.__init__(self)
+        self.pin = pin
+        self.spi = spi
+        self.conn = conn
+        self.interval = interval
+        self.value = None
+        self.status = None
+
+    def read(self):
+        # read SPI data from MCP3008 chip, 8 possible adc's (0 thru 7)
+        r = self.spi.xfer2([1, 8 + self.pin << 4, 0])
+        self.value = ((r[1] & 3) << 8) + r[2]
+        if self.value is not None:
+            if self.value > 1023 or self.value < 0:
+                self.status = 'INCOHERENT_READ'
+            else:
+                self.value = round(50 * (cos(pi * self.value / 1023) + 1))
+                self.status = 'OK'
+        else:
+            self.status = 'FAILED_TO_RETRIEVE'
+        return self.value, self.status
+
+    def save(self):
+        self.conn.save('HUMIDITY', self.value, self.status)
+
+    def log(self):
+        print(f"[HumiditySensor] Humidity: {self.value:4} - Status: {self.status}")
+
+    def run(self):
+        while True:
+            self.read()
+            self.log()
+            self.save()
+            sleep(self.interval)

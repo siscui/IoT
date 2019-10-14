@@ -12,16 +12,13 @@ class SensorDataUploader(Thread):
     def upload_data(self):
         firebase_data = self.fsm.get()
         for database in ['temperature', 'humidity', 'illumination', 'plant']:
-            db_data = self.db.get(database, "uploaded = 0 and status = 'OK'")
+            db_data = self.db.get(database, "uploaded = 0 order by id asc")
             formatted_data = list(map(lambda _, value, status, time: {
                 'value': value, 'status': status, 'time': time
             }, *zip(*db_data)))
-            if database not in firebase_data:
-                firebase_data[database] = {}
-                firebase_data[database]['values'] = []
             for data in formatted_data:
                 firebase_data[database].values.push(data)
-            self.db.set(database, {'uploaded': 1}, "status = 'OK'")
+            self.db.set(database, {'uploaded': 1}, "uploaded = 0")
         self.fsm.set(firebase_data)
 
     def run(self):

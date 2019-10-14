@@ -1,10 +1,15 @@
 from math import cos, pi
-import spidev
+from threading import Thread
+from time import sleep
 
-class PhotoSensor:
-    def __init__(self, spi):
+
+class PhotoSensor(Thread):
+    def __init__(self, spi, pin, conn, interval):
+        Thread.__init__(self)
         self.spi = spi
-        self.pin = 0
+        self.pin = pin
+        self.conn = conn
+        self.interval = interval
         self.value = None
         self.status = None
 
@@ -14,14 +19,23 @@ class PhotoSensor:
         self.value = ((r[1] & 3) << 8) + r[2]
         if self.value is not None:
             if self.value > 1023 or self.value < 0:
-                self.status = "ERR_LUZ_2"
+                self.status = 'VALUE_OUT_OF_BOUNDS'
             else:
-                self.status = "OK"
+                self.status = 'OK'
                 self.value = round(50 * (cos(pi * self.value / 1023) + 1))
         else:
-            self.status = 'ERR_LUZ_1'  # No se pudo leer el LDR
-        conn.save_sensor("ILUMINACIONES", self.value, self.status)
+            self.status = 'CANNOT_READ_LDR'
         return self.value, self.status
 
-    def mostrar(self):
-        print(f"Luz: {self.value:5}  - STATUS: {self.status}")
+    def show(self):
+        print(f"[PhotoSensor] Value: {self.value:5} - Status: {self.status}")
+
+    def save(self):
+        self.conn.save('ILLUMINATION', self.value, self.status)
+
+    def run(self):
+        while True:
+            self.read()
+            self.show()
+            self.save()
+            sleep(self.interval)

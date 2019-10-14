@@ -3,9 +3,14 @@ from firebase_admin import credentials, firestore
 
 
 class FirestoreManager:
-    def __init__(self, cred, doc_id):
+    def __init__(self, cred, col_name):
+        self.col_ref = firestore.client().collection(col_name)
+        self.doc_ref = None
         firebase_admin.initialize_app(credentials.Certificate(cred))
-        self.doc_ref = firestore.client().collection(u'cultivos').document(doc_id)
+
+    def get_doc(self, doc_id=None):
+        self.doc_ref = self.col_ref.document(doc_id)
+        return self.doc_ref
 
     def set(self, data, merge=True):
         self.doc_ref.set(data, merge=merge)
@@ -15,4 +20,3 @@ class FirestoreManager:
 
     def on_snapshot(self, handler):
         self.doc_ref.on_snapshot(handler)
-

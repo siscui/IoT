@@ -14,7 +14,7 @@ class SensorDataUploader(Thread):
         for database in ['temperature', 'humidity', 'illumination', 'plant']:
             db_data = self.db.get(database, "uploaded = 0 order by id asc")
             formatted_data = list(map(lambda _, value, status, time: {
-                'value': value, 'status': status, 'time': time
+                'value': value, 'status': status, 'timestamp': time
             }, *zip(*db_data)))
             for data in formatted_data:
                 firebase_data[database].values.push(data)

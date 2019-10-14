@@ -14,6 +14,7 @@ class TemperatureSensor(Thread):
         self.sensor = Adafruit_DHT.DHT22
         self.value = None
         self.status = None
+        self.timestamp = None
         self.lamp.add_condition(lambda temperature, c_type: min > temperature < max and c_type == 'temperature')
 
     def read(self):
@@ -30,10 +31,10 @@ class TemperatureSensor(Thread):
         return self.value, self.status
 
     def save(self):
-        self.conn.save('TEMPERATURE', {'value': self.value, 'status': self.status})
+        self.timestamp = self.conn.save('TEMPERATURE', {'value': self.value, 'status': self.status})
 
     def log(self):
-        print(f"[TemperatureSensor] Temperature: {self.value:4} - Status: {self.status}")
+        print(f"[TemperatureSensor] Temperature: {self.value:4} - Status: {self.status} - Timestamp: {self.timestapm}")
 
     def run(self):
         while True:

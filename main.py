@@ -51,18 +51,10 @@ if __name__ == '__main__':
             'lamp': {
                 'state': lamp.get_state()
             },
-            'temperature': {
-                'values': []
-            },
-            'humidity': {
-                'values': []
-            },
-            'illumination': {
-                'values': []
-            },
-            'plant': {
-                'values': []
-            }
+            'temperature': [],
+            'humidity': [],
+            'illumination': [],
+            'plant': []
         })
         conn.save('firestore_docs', {'doc_id': doc_id, 'plant': plant})
     else:

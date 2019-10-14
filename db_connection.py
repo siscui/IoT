@@ -30,6 +30,7 @@ class DbConnection:
         values.append(timestamp)
         with self.conn:
             self.conn.execute(f"INSERT INTO {table} ({keys}, TIME) VALUES ({args}, ?)", values)
+        return timestamp
 
     def get(self, table, query):
         cur = self.conn.cursor()

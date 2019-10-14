@@ -12,6 +12,7 @@ class ImageProcessor(Thread):
         self.last_photo = None
         self.plant = None
         self.maturity = None
+        self.timestamp = None
 
     def take_photo(self):
         self.last_photo = self.camera.take_photo()
@@ -20,10 +21,10 @@ class ImageProcessor(Thread):
         self.plant, self.maturity = self.ai.analyze(self.last_photo)
 
     def save(self):
-        self.conn.save('PLANT', self.plant, self.maturity)
+        self.timestamp = self.conn.save('PLANT', self.plant, self.maturity)
 
     def log(self):
-        print(f"[ImageProcessor] Plant: {self.plant} - Maturity: {self.maturity}")
+        print(f"[ImageProcessor] Plant: {self.plant} - Maturity: {self.maturity} - Timestamp: {self.timestamp}")
 
     def run(self):
         self.take_photo()

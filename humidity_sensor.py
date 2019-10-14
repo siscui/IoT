@@ -13,6 +13,7 @@ class HumiditySensor(Thread):
         self.interval = interval
         self.value = None
         self.status = None
+        self.timestamp = None
         self.pump.add_condition(lambda humidity, c_type: min > humidity < max and c_type == 'humidity')
 
     def read(self):
@@ -31,10 +32,10 @@ class HumiditySensor(Thread):
         return self.value, self.status
 
     def save(self):
-        self.conn.save('HUMIDITY', {'value': self.value, 'status': self.status})
+        self.timestamp = self.conn.save('HUMIDITY', {'value': self.value, 'status': self.status})
 
     def log(self):
-        print(f"[HumiditySensor] Humidity: {self.value:4} - Status: {self.status}")
+        print(f"[HumiditySensor] Humidity: {self.value:4} - Status: {self.status} - Timestamp: {self.timestamp}")
 
     def run(self):
         while True:

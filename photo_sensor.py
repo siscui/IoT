@@ -13,6 +13,7 @@ class PhotoSensor(Thread):
         self.interval = interval
         self.value = None
         self.status = None
+        self.timestamp = None
         self.lamp.add_condition(lambda photo, c_type: min > photo < max and c_type == 'photo')
 
     def read(self):
@@ -30,15 +31,15 @@ class PhotoSensor(Thread):
             self.status = 'CANNOT_READ_LDR'
         return self.value, self.status
 
-    def show(self):
-        print(f"[PhotoSensor] Value: {self.value:5} - Status: {self.status}")
-
     def save(self):
-        self.conn.save('ILLUMINATION', {'value': self.value, 'status': self.status})
+        self.timestamp = self.conn.save('ILLUMINATION', {'value': self.value, 'status': self.status})
+
+    def log(self):
+        print(f"[PhotoSensor] Value: {self.value:5} - Status: {self.status} - Timestamp: {self.timestamp}")
 
     def run(self):
         while True:
             self.read()
-            self.show()
+            self.log()
             self.save()
             sleep(self.interval)

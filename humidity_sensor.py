@@ -4,7 +4,7 @@ from time import sleep
 
 
 class HumiditySensor(Thread):
-    def __init__(self, spi, pin, conn, pump, interval, min, max):
+    def __init__(self, spi, pin, conn, pump, interval, min_humidity, max_humidity):
         Thread.__init__(self)
         self.pin = pin
         self.spi = spi
@@ -14,7 +14,8 @@ class HumiditySensor(Thread):
         self.value = None
         self.status = None
         self.timestamp = None
-        self.pump.add_condition(lambda humidity, c_type: min > humidity < max and c_type == 'humidity')
+        self.pump.add_condition(
+            lambda humidity, c_type: min_humidity > humidity < max_humidity and c_type == 'humidity')
 
     def read(self):
         # read SPI data from MCP3008 chip, 8 possible adc's (0 thru 7)

@@ -20,7 +20,7 @@ class SensorDataUploader(Thread):
                 'value': value, 'status': status, 'timestamp': timestamp
             }, *zip(*db_data)))
             for data in formatted_data:
-                firebase_data[database].push(data)
+                firebase_data[database]['values'].push(data)
             self.db.set(database, {'uploaded': 1}, "uploaded = 0")
             amount_processed += len(formatted_data)
         self.fsm.set(firebase_data)

@@ -4,10 +4,10 @@ from time import sleep
 
 
 class TemperatureSensor(Thread):
-    def __init__(self, pin, retries, lamp, interval, conn, min, max):
+    def __init__(self, pin, lamp, interval, conn, min_temperature, max_temperature):
         Thread.__init__(self)
         self.pin = pin
-        self.retries = retries
+        self.retries = 5
         self.lamp = lamp
         self.interval = interval
         self.conn = conn
@@ -15,7 +15,8 @@ class TemperatureSensor(Thread):
         self.value = None
         self.status = None
         self.timestamp = None
-        self.lamp.add_condition(lambda temperature, c_type: min > temperature < max and c_type == 'temperature')
+        self.lamp.add_condition(
+            lambda temperature, c_type: min_temperature > temperature < max_temperature and c_type == 'temperature')
 
     def read(self):
         _, self.value = Adafruit_DHT.read_retry(self.sensor, self.pin, self.retries)

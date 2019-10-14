@@ -1,4 +1,5 @@
 import spidev
+import json
 import RPi.GPIO as GPIO
 from uuid import getnode
 
@@ -29,6 +30,7 @@ if __name__ == '__main__':
     spi.open(0, 0)
     spi.max_speed_hz = 1000000
     GPIO.setmode(GPIO.BOARD)
+    min_max_per_plant = json.loads('./min_max.json')
     cred = './credentials.json'
 
     conn = DbConnection(db_name='local_db')
@@ -39,6 +41,9 @@ if __name__ == '__main__':
     pump = DeviceController(pin=29)
     filename = camera.take_photo()
     plant, _ = ai.analyze(filename)
+    min_temperature, max_temperature = min_max_per_plant[plant]['temperature'].values()
+    min_humidity, max_humidity = min_max_per_plant[plant]['humidity'].values()
+    min_illumination, max_illumination = min_max_per_plant[plant]['illumination'].values()
 
     results = conn.get('firestore_docs', f"WHERE PLANT = '{plant}' ORDER BY ID DESC LIMIT 1")
     if len(results) == 0:
@@ -51,18 +56,33 @@ if __name__ == '__main__':
             'lamp': {
                 'state': lamp.get_state()
             },
-            'temperature': [],
-            'humidity': [],
-            'illumination': [],
+            'temperature': {
+                'min': min_temperature,
+                'max': max_temperature,
+                'values': []
+            },
+            'humidity': {
+                'min': min_humidity,
+                'max': max_humidity,
+                'values': []
+            },
+            'illumination': {
+                'min': min_illumination,
+                'max': max_illumination,
+                'values': []
+            },
             'plant': []
         })
         conn.save('firestore_docs', {'doc_id': doc_id, 'plant': plant})
     else:
         fsm.retrieve_doc(doc_id=results[1])
 
-    PhotoSensor(spi=spi, conn=conn, lamp=lamp, interval=60, pin=0, min=0, max=1).start()
-    HumiditySensor(spi=spi, conn=conn, pump=pump, interval=60, pin=1, min=0, max=1).start()
-    TemperatureSensor(conn=conn, lamp=lamp, interval=60, pin=4, retries=5, min=0, max=1).start()
+    PhotoSensor(spi=spi, conn=conn, lamp=lamp, interval=60, pin=0, min_illumination=min_illumination,
+                max_illumination=max_illumination).start()
+    HumiditySensor(spi=spi, conn=conn, pump=pump, interval=60, pin=1, min_humidity=min_humidity,
+                   max_humidity=max_humidity).start()
+    TemperatureSensor(conn=conn, lamp=lamp, interval=60, pin=4, min_temperature=min_temperature,
+                      max_temperature=max_temperature).start()
     ImageProcessor(conn=conn, interval=120, camera=camera, ai=ai).start()
     SensorDataUploader(conn=conn, interval=120, fsm=fsm).start()
 

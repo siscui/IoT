@@ -4,7 +4,7 @@ from time import sleep
 
 
 class PhotoSensor(Thread):
-    def __init__(self, spi, pin, conn, lamp, interval, min, max):
+    def __init__(self, spi, pin, conn, lamp, interval, min_illumination, max_illumination):
         Thread.__init__(self)
         self.spi = spi
         self.pin = pin
@@ -14,7 +14,7 @@ class PhotoSensor(Thread):
         self.value = None
         self.status = None
         self.timestamp = None
-        self.lamp.add_condition(lambda photo, c_type: min > photo < max and c_type == 'photo')
+        self.lamp.add_condition(lambda photo, c_type: min_illumination > photo < max_illumination and c_type == 'photo')
 
     def read(self):
         # read SPI data from MCP3008 chip, 8 possible adc's (0 thru 7)

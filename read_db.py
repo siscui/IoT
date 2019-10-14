@@ -26,6 +26,4 @@ doc_id = u'9gOhABtBYIToU5N4RRxV'
 
 fsm = FirestoreManager(cred, doc_id)
 
-fsm.on_snapshot(handler)
-
-input()
+print(fsm.get())

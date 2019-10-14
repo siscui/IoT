@@ -22,6 +22,7 @@ https://www.tutorialspoint.com/python/time_strftime
 https://www.instructables.com/id/Soil-Moisture-Sensor-Raspberry-Pi/
 
 https://computers.tutsplus.com/tutorials/build-a-raspberry-pi-moisture-sensor-to-monitor-your-plants--mac-52875
+
 https://www.youtube.com/watch?v=qw29egj5o9w
 
 http://www.pibits.net/code/read-ldr-raspberry-pi-using-mcp3008.php

@@ -19,7 +19,7 @@ class TemperatureSensor(Thread):
         if self.value is not None:
             self.value = round(self.value, 1)
             if self.value > 80 or self.value < -40:
-                self.status = 'INCOHERENT_TEMPERATURE'
+                self.status = 'INCOHERENT_READ'
             else:
                 self.status = 'OK'
         else:
@@ -29,11 +29,12 @@ class TemperatureSensor(Thread):
     def save(self):
         self.conn.save('TEMPERATURE', self.value, self.status)
 
-    def show(self):
+    def log(self):
         print(f"[TemperatureSensor] Temperature: {self.value:4} - Status: {self.status}")
 
     def run(self):
         while True:
             self.read()
+            self.log()
             self.save()
             sleep(self.interval)

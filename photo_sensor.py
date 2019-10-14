@@ -4,14 +4,16 @@ from time import sleep
 
 
 class PhotoSensor(Thread):
-    def __init__(self, spi, pin, conn, interval):
+    def __init__(self, spi, pin, conn, lamp, interval, min, max):
         Thread.__init__(self)
         self.spi = spi
         self.pin = pin
         self.conn = conn
+        self.lamp = lamp
         self.interval = interval
         self.value = None
         self.status = None
+        self.lamp.add_condition(lambda photo, c_type: min > photo < max and c_type == 'photo')
 
     def read(self):
         # read SPI data from MCP3008 chip, 8 possible adc's (0 thru 7)
@@ -23,6 +25,7 @@ class PhotoSensor(Thread):
             else:
                 self.status = 'OK'
                 self.value = round(50 * (cos(pi * self.value / 1023) + 1))
+                self.lamp.validate(self.value, 'photo')
         else:
             self.status = 'CANNOT_READ_LDR'
         return self.value, self.status
@@ -31,7 +34,7 @@ class PhotoSensor(Thread):
         print(f"[PhotoSensor] Value: {self.value:5} - Status: {self.status}")
 
     def save(self):
-        self.conn.save('ILLUMINATION', self.value, self.status)
+        self.conn.save('ILLUMINATION', {'value': self.value, 'status': self.status})
 
     def run(self):
         while True:

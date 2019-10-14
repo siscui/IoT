@@ -3,7 +3,7 @@ from datetime import datetime
 from time import sleep
 
 
-class CameraController:
+class Camera:
     def __init__(self):
         self.camera = PiCamera()
         self.camera.rotation = 180

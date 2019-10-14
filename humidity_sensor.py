@@ -4,14 +4,16 @@ from time import sleep
 
 
 class HumiditySensor(Thread):
-    def __init__(self, spi, pin, conn, interval):
+    def __init__(self, spi, pin, conn, pump, interval, min, max):
         Thread.__init__(self)
         self.pin = pin
         self.spi = spi
         self.conn = conn
+        self.pump = pump
         self.interval = interval
         self.value = None
         self.status = None
+        self.pump.add_condition(lambda humidity, c_type: min > humidity < max and c_type == 'humidity')
 
     def read(self):
         # read SPI data from MCP3008 chip, 8 possible adc's (0 thru 7)
@@ -23,12 +25,13 @@ class HumiditySensor(Thread):
             else:
                 self.value = round(50 * (cos(pi * self.value / 1023) + 1))
                 self.status = 'OK'
+                self.pump.validate(self.value, 'humidity')
         else:
             self.status = 'FAILED_TO_RETRIEVE'
         return self.value, self.status
 
     def save(self):
-        self.conn.save('HUMIDITY', self.value, self.status)
+        self.conn.save('HUMIDITY', {'value': self.value, 'status': self.status})
 
     def log(self):
         print(f"[HumiditySensor] Humidity: {self.value:4} - Status: {self.status}")

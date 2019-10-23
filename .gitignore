@@ -2,3 +2,6 @@ local_db
 .vscode
 .idea
 photos
+fotos
+*.db
+__pycache__

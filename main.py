@@ -30,7 +30,7 @@ if __name__ == '__main__':
     spi.open(0, 0)
     spi.max_speed_hz = 1000000
     GPIO.setmode(GPIO.BOARD)
-    min_max_per_plant = json.loads('./min_max.json')
+    min_max_per_plant = json.loads(json.dumps('./min_max.json'))
     cred = './credentials.json'
 
     conn = DbConnection(db_name='local_db')

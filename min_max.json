@@ -1,0 +1,72 @@
+﻿{
+	"morron": {
+		"temperature": {
+			"min": 15,
+			"max": 24
+		},
+		"humidity": {
+			"min": 50,
+			"max": 80
+		},
+		"illumination": {
+			"min": 40,
+			"max": 80
+		}
+	},
+	"tomate-cherry": {
+		"temperature": {
+			"min": 15,
+			"max": 28
+		},
+		"humidity": {
+			"min": 60,
+			"max": 85
+		},
+		"illumination": {
+			"min": 60,
+			"max": 85
+		}
+	},
+	"espinaca": {
+		"temperature": {
+			"min": 15,
+			"max": 24
+		},
+		"humidity": {
+			"min": 50,
+			"max": 80
+		},
+		"illumination": {
+			"min": 40,
+			"max": 80
+		}
+	},
+	"menta": {
+		"temperature": {
+			"min": 12,
+			"max": 30
+		},
+		"humidity": {
+			"min": 70,
+			"max": 90
+		},
+		"illumination": {
+			"min": 40,
+			"max": 60
+		}
+	},
+	"cactus": {
+		"temperature": {
+			"min": 5,
+			"max": 50
+		},
+		"humidity": {
+			"min": 20,
+			"max": 50
+		},
+		"illumination": {
+			"min": 40,
+			"max": 80
+		}
+	}
+}

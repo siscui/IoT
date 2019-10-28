@@ -27,7 +27,7 @@ class HumiditySensor(Thread):
             else:
                 self.value = round(50 * (cos(pi * self.value / 1023) + 1))
                 self.status = 'OK'
-                self.pump.validate(self.value, 'humidity')
+                self.pump.verify_conditions(self.value, 'humidity')
         else:
             self.status = 'FAILED_TO_RETRIEVE'
         return self.value, self.status
@@ -36,11 +36,11 @@ class HumiditySensor(Thread):
         self.timestamp = self.conn.save('HUMIDITY', {'value': self.value, 'status': self.status})
 
     def log(self):
-        print(f"[HumiditySensor] Humidity: {self.value:4} - Status: {self.status} - Timestamp: {self.timestamp}")
+        print(f"[HumiditySensor] Humidity: {self.value} - Status: {self.status} - Timestamp: {self.timestamp}")
 
     def run(self):
         while True:
             self.read()
-            self.log()
             self.save()
+            self.log()
             sleep(self.interval)

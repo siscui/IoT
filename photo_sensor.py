@@ -26,7 +26,7 @@ class PhotoSensor(Thread):
             else:
                 self.status = 'OK'
                 self.value = round(50 * (cos(pi * self.value / 1023) + 1))
-                self.lamp.validate(self.value, 'photo')
+                self.lamp.verify_conditions(self.value, 'photo')
         else:
             self.status = 'CANNOT_READ_LDR'
         return self.value, self.status
@@ -35,11 +35,11 @@ class PhotoSensor(Thread):
         self.timestamp = self.conn.save('ILLUMINATION', {'value': self.value, 'status': self.status})
 
     def log(self):
-        print(f"[PhotoSensor] Value: {self.value:5} - Status: {self.status} - Timestamp: {self.timestamp}")
+        print(f"[PhotoSensor] Value: {self.value} - Status: {self.status} - Timestamp: {self.timestamp}")
 
     def run(self):
         while True:
             self.read()
-            self.log()
             self.save()
+            self.log()
             sleep(self.interval)

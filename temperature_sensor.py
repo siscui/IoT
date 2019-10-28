@@ -26,7 +26,7 @@ class TemperatureSensor(Thread):
                 self.status = 'INCOHERENT_READ'
             else:
                 self.status = 'OK'
-                self.lamp.validate(self.value, 'temperature')
+                self.lamp.verify_conditions(self.value, 'temperature')
         else:
             self.status = 'FAILED_TO_RETRIEVE'
         return self.value, self.status
@@ -35,11 +35,11 @@ class TemperatureSensor(Thread):
         self.timestamp = self.conn.save('TEMPERATURE', {'value': self.value, 'status': self.status})
 
     def log(self):
-        print(f"[TemperatureSensor] Temperature: {self.value:4} - Status: {self.status} - Timestamp: {self.timestapm}")
+        print(f"[TemperatureSensor] Temperature: {self.value} - Status: {self.status} - Timestamp: {self.timestamp}")
 
     def run(self):
         while True:
             self.read()
-            self.log()
             self.save()
+            self.log()
             sleep(self.interval)

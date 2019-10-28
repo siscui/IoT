@@ -5,7 +5,7 @@ from os import sys
 
 class DbConnection:
     def __init__(self, db_name):
-        self.conn = connect(db_name)
+        self.conn = connect(db_name, check_same_thread=False)
 
         try:
             cur = self.conn.cursor()
@@ -23,13 +23,18 @@ class DbConnection:
             sys.exit(e)
 
     def save(self, table, obj):
-        keys = ", ".join(obj.keys())
-        args = ", ".join(list(map(lambda x: "?", obj.keys())))
         timestamp = int(time())
         values = list(obj.values())
+        keys = ", ".join(obj.keys())
+        keys += ', TIME'
         values.append(timestamp)
+        if table != 'firestore_docs':
+            keys += ', UPLOADED'
+            values.append(0)
+        args = ", ".join(list(map(lambda x: "?", values)))
+        
         with self.conn:
-            self.conn.execute(f"INSERT INTO {table} ({keys}, TIME) VALUES ({args}, ?)", values)
+            self.conn.execute(f"INSERT INTO {table} ({keys}) VALUES ({args})", values)
         return timestamp
 
     def get(self, table, query):
@@ -40,8 +45,6 @@ class DbConnection:
     def set(self, table, obj, query):
         cur = self.conn.cursor()
         data = ", ".join(list(map(lambda x: f"{x} = {obj[x]}", obj)))
-        print(data)
-        print(f"UPDATE {table} SET {data} WHERE {query}")
         cur.execute(f"UPDATE {table} SET {data} WHERE {query}")
         self.conn.commit()
 

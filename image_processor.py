@@ -21,7 +21,7 @@ class ImageProcessor(Thread):
         self.plant, self.maturity = self.ai.analyze(self.last_photo)
 
     def save(self):
-        self.timestamp = self.conn.save('PLANT', self.plant, self.maturity)
+        self.timestamp = self.conn.save('PLANT', { 'species': self.plant, 'maturity': self.maturity })
 
     def log(self):
         print(f"[ImageProcessor] Plant: {self.plant} - Maturity: {self.maturity} - Timestamp: {self.timestamp}")
@@ -29,6 +29,6 @@ class ImageProcessor(Thread):
     def run(self):
         self.take_photo()
         self.analyze_photo()
-        self.log()
         self.save()
+        self.log()
         sleep(self.interval)

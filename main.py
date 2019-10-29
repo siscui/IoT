@@ -83,7 +83,7 @@ if __name__ == '__main__':
                 max_illumination=max_illumination).start()
     HumiditySensor(spi=spi, conn=conn, pump=pump, interval=60, pin=1, min_humidity=min_humidity,
                    max_humidity=max_humidity).start()
-    TemperatureSensor(conn=conn, lamp=lamp, interval=60, pin=13, min_temperature=min_temperature,
+    TemperatureSensor(conn=conn, lamp=lamp, interval=60, pin=23, min_temperature=min_temperature,
                       max_temperature=max_temperature).start()
     ImageProcessor(conn=conn, interval=120, camera=camera, ai=ai).start()
     SensorDataUploader(conn=conn, interval=120, fsm=fsm).start()

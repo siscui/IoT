@@ -39,8 +39,9 @@ if __name__ == '__main__':
     fsm = FirestoreManager(cred=cred, col_name='crops')
     ai = AIModelManager()
     camera = Camera()
-    lamp = DeviceController(pin=26)
-    pump = DeviceController(pin=29)
+    heater = DeviceController(pin=11)
+    lamp = DeviceController(pin=22)
+    pump = DeviceController(pin=18)
     filename = camera.take_photo()
     plant, _ = ai.analyze(filename)
     min_temperature, max_temperature = min_max_per_plant[plant]['temperature'].values()
@@ -83,7 +84,7 @@ if __name__ == '__main__':
                 max_illumination=max_illumination).start()
     HumiditySensor(spi=spi, conn=conn, pump=pump, interval=60, pin=1, min_humidity=min_humidity,
                    max_humidity=max_humidity).start()
-    TemperatureSensor(conn=conn, lamp=lamp, interval=60, pin=23, min_temperature=min_temperature,
+    TemperatureSensor(conn=conn, lamp=lamp, interval=60, pin=22, min_temperature=min_temperature,
                       max_temperature=max_temperature).start()
     ImageProcessor(conn=conn, interval=120, camera=camera, ai=ai).start()
     SensorDataUploader(conn=conn, interval=120, fsm=fsm).start()

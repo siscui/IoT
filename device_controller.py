@@ -9,7 +9,7 @@ class DeviceController:
         self.state = 0
         self.conditions = []
         GPIO.setwarnings(False)
-        GPIO.setup(self.pin, GPIO.OUT)
+        GPIO.setup(self.pin, GPIO.OUT, initial=1)
 
     def add_condition(self, condition):
         self.conditions.append(condition)

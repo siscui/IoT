@@ -5,6 +5,7 @@ from time import sleep, time
 class Camera:
     def __init__(self):
         self.camera = PiCamera()
+        self.camera.rotation = 180
 
     def take_photo(self):
         filename = f"./photos/{int(time())}.jpg"
@@ -12,5 +13,5 @@ class Camera:
             self.camera.start_preview()
             sleep(0.5)
             self.camera.capture(file)
-            self.camera.stop_preview()
+        self.camera.stop_preview()
         return filename

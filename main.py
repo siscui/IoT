@@ -43,12 +43,12 @@ if __name__ == '__main__':
     lamp = DeviceController(pin=22)
     pump = DeviceController(pin=18)
     filename = camera.take_photo()
-    plant, _ = ai.analyze(filename)
-    min_temperature, max_temperature = min_max_per_plant[plant]['temperature'].values()
-    min_humidity, max_humidity = min_max_per_plant[plant]['humidity'].values()
-    min_illumination, max_illumination = min_max_per_plant[plant]['illumination'].values()
+    species, _, _ = ai.analyze(filename=filename)
+    min_temperature, max_temperature = min_max_per_plant[species]['temperature'].values()
+    min_humidity, max_humidity = min_max_per_plant[species]['humidity'].values()
+    min_illumination, max_illumination = min_max_per_plant[species]['illumination'].values()
 
-    results = conn.get('firestore_docs', f"PLANT = '{plant}' ORDER BY ID DESC LIMIT 1")
+    results = conn.get('firestore_docs', f"PLANT = '{species}' ORDER BY ID DESC LIMIT 1")
     if len(results) == 0:
         doc_id = fsm.retrieve_doc()
         fsm.set({
@@ -76,7 +76,7 @@ if __name__ == '__main__':
             },
             'plant': []
         })
-        conn.save('firestore_docs', {'doc_id': doc_id, 'plant': plant})
+        conn.save('firestore_docs', {'doc_id': doc_id, 'plant': species})
     else:
         fsm.retrieve_doc(doc_id=results[0][1])
 

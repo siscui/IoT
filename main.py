@@ -18,9 +18,9 @@ if __name__ == '__main__':
 
     def on_snapshot(doc_snapshot, changes, read_time):
         for doc in doc_snapshot:
-            doc_dict = doc.to_dict()
-            pump_state = doc_dict['pump']['state']
-            lamp_state = doc_dict['lamp']['state']
+            data = doc.to_dict()
+            pump_state = data['pump']['state']
+            lamp_state = data['lamp']['state']
             print(f'Received document snapshot: {doc.id}. Pump: {pump_state} Lamp: {lamp_state}')
             pump.set_state(pump_state)
             lamp.set_state(lamp_state)
@@ -52,6 +52,7 @@ if __name__ == '__main__':
         species, _, _ = image_processor.run()
 
         if species != 'vacio':
+
             if query_watch is None:
                 min_temperature, max_temperature = min_max_per_plant[species]['temperature'].values()
                 min_humidity, max_humidity = min_max_per_plant[species]['humidity'].values()
@@ -67,10 +68,12 @@ if __name__ == '__main__':
                     fsm.set({
                         'device_id': getnode(),
                         'pump': {
-                            'state': pump.get_state()
+                            'state': pump.get_state(),
+                            'force': False
                         },
                         'lamp': {
-                            'state': lamp.get_state()
+                            'state': lamp.get_state(),
+                            'force': False
                         },
                         'temperature': {
                             'min': min_temperature,
@@ -93,6 +96,8 @@ if __name__ == '__main__':
                 else:
                     fsm.retrieve_doc(doc_id=results[0][1])
                 query_watch = fsm.on_snapshot(on_snapshot)
+
+            doc_dict = fsm.get()
             photo_sensor.run()
             humidity_sensor.run()
             temperature_sensor.run()
@@ -103,4 +108,5 @@ if __name__ == '__main__':
             temperature_sensor.unset_min_max()
             query_watch.unsubscribe()
             query_watch = None
+
         sleep(2000)

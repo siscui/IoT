@@ -1,14 +1,12 @@
-from threading import Thread
-from time import sleep
+from ai_model_manager import AIModelManager
+from camera import Camera
 
 
-class ImageProcessor(Thread):
-    def __init__(self, conn, interval, camera, ai):
-        Thread.__init__(self)
+class ImageProcessor:
+    def __init__(self, conn):
         self.conn = conn
-        self.interval = interval
-        self.ai = ai
-        self.camera = camera
+        self.ai = AIModelManager()
+        self.camera = Camera()
         self.last_photo = None
         self.species = None
         self.percentage = None
@@ -33,4 +31,4 @@ class ImageProcessor(Thread):
         self.analyze_photo()
         self.save()
         self.log()
-        sleep(self.interval)
+        return self.species, self.percentage, self.maturity

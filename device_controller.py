@@ -3,6 +3,7 @@ import RPi.GPIO as GPIO
 ON_STATE = 0
 OFF_STATE = 1
 
+
 class DeviceController:
     def __init__(self, pin):
         self.pin = pin
@@ -13,6 +14,9 @@ class DeviceController:
 
     def add_condition(self, condition):
         self.conditions.append(condition)
+
+    def reset(self):
+        self.conditions = []
 
     def verify_conditions(self, value, c_type):
         for condition in self.conditions:

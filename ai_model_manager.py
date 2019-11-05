@@ -8,8 +8,6 @@ class AIModelManager:
         self.species = None
 
     def detect_species(self):
-        print("Analizando especie ...")
-        t1 = datetime.datetime.now()
         return LabelImage(model_file="models/detect_species.pb",
                           label_file="models/detect_species.txt",
                           input_layer="input",
@@ -17,12 +15,8 @@ class AIModelManager:
                           input_height=160,
                           input_width=160,
                           filename=self.filename).run()
-        tot = datetime.datetime.now() - t1
-        print(f"{round(tot.total_seconds(),1)} seg.")
 
     def detect_maturation(self):
-        print("Detectar maduracion ...")
-        t1 = datetime.datetime.now()
         if self.species == 'tomate' or self.species == 'morron':
             return LabelImage(model_file=f"models/maturity_{self.species}.pb",
                               label_file=f"models/maturity_{self.species}.txt",
@@ -31,14 +25,20 @@ class AIModelManager:
                               input_width=160,
                               input_height=160,
                               filename=self.filename).run()
-        tot = datetime.datetime.now() - t1
-        print(f"{round(tot.total_seconds(),1)} seg.")
         return None, None
 
     def analyze(self, filename):
         self.filename = filename
+        print("Analizando especie ...")
+        t1 = datetime.datetime.now()
         self.species, percentage = self.detect_species()
+        tot = datetime.datetime.now() - t1
+        print(f"{round(tot.total_seconds(),1)} seg.")
         print(self.species)
+        print("Detectar maduracion ...")
+        t1 = datetime.datetime.now()
         _, maturity = self.detect_maturation()
+        tot = datetime.datetime.now() - t1
+        print(f"{round(tot.total_seconds(),1)} seg.")
         print(maturity)
         return self.species, percentage, maturity

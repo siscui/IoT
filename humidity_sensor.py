@@ -1,16 +1,17 @@
 from math import cos, pi
-from time import sleep
+from device_controller import DeviceController
 
 
 class HumiditySensor:
-    def __init__(self, spi, pin, conn, pump):
+    def __init__(self, spi, pin, conn, pump_pin):
         self.pin = pin
         self.spi = spi
         self.conn = conn
-        self.pump = pump
+        self.pump = DeviceController(pin=pump_pin)
         self.value = None
         self.status = None
         self.timestamp = None
+        self.force = False
 
     def set_min_max(self, min_humidity, max_humidity):
         self.pump.add_condition(
@@ -18,6 +19,13 @@ class HumiditySensor:
 
     def unset_min_max(self):
         self.pump.reset()
+
+    def set_pump_state(self, state):
+        if self.force is False:
+            self.pump.set_state(state)
+
+    def get_pump_state(self):
+        return self.pump.get_state()
 
     def read(self):
         # read SPI data from MCP3008 chip, 8 possible adc's (0 thru 7)
@@ -40,7 +48,8 @@ class HumiditySensor:
     def log(self):
         print(f"[HumiditySensor] Humidity: {self.value} - Status: {self.status} - Timestamp: {self.timestamp}")
 
-    def run(self):
+    def run(self, force):
+        self.force = force
         self.read()
         self.save()
         self.log()

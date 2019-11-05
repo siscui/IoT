@@ -1,26 +1,32 @@
 import Adafruit_DHT
-from threading import Thread
-from time import sleep
+from device_controller import DeviceController
 
 
-class TemperatureSensor(Thread):
-    def __init__(self, pin, lamp, conn):
-        Thread.__init__(self)
+class TemperatureSensor:
+    def __init__(self, pin, heater_pin, conn):
         self.pin = pin
         self.retries = 5
-        self.lamp = lamp
+        self.heater = DeviceController(pin=heater_pin)
         self.conn = conn
         self.sensor = Adafruit_DHT.DHT22
         self.value = None
         self.status = None
         self.timestamp = None
+        self.force = False
 
     def set_min_max(self, min_temperature, max_temperature):
-        self.lamp.add_condition(
+        self.heater.add_condition(
             lambda temperature, c_type: min_temperature > temperature < max_temperature and c_type == 'temperature')
 
     def unset_min_max(self):
-        self.lamp.reset()
+        self.heater.reset()
+
+    def set_heater_state(self, state):
+        if self.force is False:
+            self.heater.set_state(state)
+
+    def get_heater_state(self):
+        return self.heater.get_state()
 
     def read(self):
         _, self.value = Adafruit_DHT.read_retry(self.sensor, self.pin, self.retries)
@@ -30,7 +36,7 @@ class TemperatureSensor(Thread):
                 self.status = 'INCOHERENT_READ'
             else:
                 self.status = 'OK'
-                self.lamp.verify_conditions(self.value, 'temperature')
+                self.heater.verify_conditions(self.value, 'temperature')
         else:
             self.status = 'FAILED_TO_RETRIEVE'
         return self.value, self.status
@@ -41,7 +47,8 @@ class TemperatureSensor(Thread):
     def log(self):
         print(f"[TemperatureSensor] Temperature: {self.value} - Status: {self.status} - Timestamp: {self.timestamp}")
 
-    def run(self):
+    def run(self, force):
+        self.force = force
         self.read()
         self.save()
         self.log()

@@ -1,21 +1,30 @@
 from math import cos, pi
+from device_controller import DeviceController
 
 
 class PhotoSensor:
-    def __init__(self, spi, pin, conn, lamp):
+    def __init__(self, spi, pin, conn, lamp_pin):
         self.spi = spi
         self.pin = pin
         self.conn = conn
-        self.lamp = lamp
+        self.lamp = DeviceController(pin=lamp_pin)
         self.value = None
         self.status = None
         self.timestamp = None
+        self.force = False
 
     def set_min_max(self, min_illumination, max_illumination):
         self.lamp.add_condition(lambda photo, c_type: min_illumination > photo < max_illumination and c_type == 'photo')
 
     def unset_min_max(self):
         self.lamp.reset()
+
+    def set_lamp_state(self, state):
+        if self.force is False:
+            self.lamp.set_state(state)
+
+    def get_lamp_state(self):
+        return self.lamp.get_state()
 
     def read(self):
         # read SPI data from MCP3008 chip, 8 possible adc's (0 thru 7)
@@ -38,7 +47,8 @@ class PhotoSensor:
     def log(self):
         print(f"[PhotoSensor] Value: {self.value} - Status: {self.status} - Timestamp: {self.timestamp}")
 
-    def run(self):
+    def run(self, force):
+        self.force = force
         self.read()
         self.save()
         self.log()

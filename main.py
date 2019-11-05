@@ -12,7 +12,7 @@ from image_processor import ImageProcessor
 from db_connection import DbConnection
 from firestore_manager import FirestoreManager
 from sensor_data_uploader import SensorDataUploader
-from device_controller import DeviceController
+
 
 if __name__ == '__main__':
 
@@ -21,10 +21,11 @@ if __name__ == '__main__':
             data = doc.to_dict()
             pump_state = data['pump']['state']
             lamp_state = data['lamp']['state']
-            print(f'Received document snapshot: {doc.id}. Pump: {pump_state} Lamp: {lamp_state}')
-            pump.set_state(pump_state)
-            lamp.set_state(lamp_state)
-
+            heater_state = data['heater']['state']
+            print(f'Received document snapshot: {doc.id}. Pump: {pump_state} Lamp: {lamp_state} Heater {heater_state}')
+            humidity_sensor.set_pump_state(pump_state)
+            photo_sensor.set_lamp_state(lamp_state)
+            temperature_sensor.set_heater_state(heater_state)
 
     spi = spidev.SpiDev()
     spi.open(0, 0)
@@ -37,23 +38,29 @@ if __name__ == '__main__':
     conn = DbConnection(db_name='local.db')
     fsm = FirestoreManager(cred=cred, col_name='crops')
 
-    heater = DeviceController(pin=11)
-    lamp = DeviceController(pin=22)
-    pump = DeviceController(pin=18)
-
     image_processor = ImageProcessor(conn=conn)
-    photo_sensor = PhotoSensor(spi=spi, conn=conn, lamp=lamp, pin=0)
-    humidity_sensor = HumiditySensor(spi=spi, conn=conn, pump=pump, pin=1)
-    temperature_sensor = TemperatureSensor(conn=conn, lamp=lamp, pin=22)
+    photo_sensor = PhotoSensor(spi=spi, conn=conn, lamp_pin=22, pin=0)
+    humidity_sensor = HumiditySensor(spi=spi, conn=conn, pump_pin=18, pin=1)
+    temperature_sensor = TemperatureSensor(conn=conn, heater_pin=11, pin=22)
     sensor_data_uploader = SensorDataUploader(conn=conn, fsm=fsm)
     query_watch = None
+    species = None
 
     while True:
+        prev_species = species
         species, _, _ = image_processor.run()
 
         if species != 'vacio':
 
-            if query_watch is None:
+            # If it's the first run, or species changed
+            if query_watch is None or (species != prev_species and prev_species is not None):
+                if query_watch is not None:
+                    photo_sensor.unset_min_max()
+                    humidity_sensor.unset_min_max()
+                    temperature_sensor.unset_min_max()
+                    query_watch.unsubscribe()
+                    query_watch = None
+
                 min_temperature, max_temperature = min_max_per_plant[species]['temperature'].values()
                 min_humidity, max_humidity = min_max_per_plant[species]['humidity'].values()
                 min_illumination, max_illumination = min_max_per_plant[species]['illumination'].values()
@@ -68,11 +75,15 @@ if __name__ == '__main__':
                     fsm.set({
                         'device_id': getnode(),
                         'pump': {
-                            'state': pump.get_state(),
+                            'state': humidity_sensor.get_pump_state(),
                             'force': False
                         },
                         'lamp': {
-                            'state': lamp.get_state(),
+                            'state': photo_sensor.get_lamp_state(),
+                            'force': False
+                        },
+                        'heater': {
+                            'state': temperature_sensor.get_heater_state(),
                             'force': False
                         },
                         'temperature': {
@@ -98,15 +109,16 @@ if __name__ == '__main__':
                 query_watch = fsm.on_snapshot(on_snapshot)
 
             doc_dict = fsm.get()
-            photo_sensor.run()
-            humidity_sensor.run()
-            temperature_sensor.run()
+            photo_sensor.run(force=doc_dict['lamp']['force'])
+            humidity_sensor.run(force=doc_dict['pump']['force'])
+            temperature_sensor.run(force=doc_dict['heater']['force'])
             sensor_data_uploader.run()
         else:
-            photo_sensor.unset_min_max()
-            humidity_sensor.unset_min_max()
-            temperature_sensor.unset_min_max()
-            query_watch.unsubscribe()
-            query_watch = None
+            if query_watch is not None:
+                photo_sensor.unset_min_max()
+                humidity_sensor.unset_min_max()
+                temperature_sensor.unset_min_max()
+                query_watch.unsubscribe()
+                query_watch = None
 
-        sleep(2000)
+        sleep(120)

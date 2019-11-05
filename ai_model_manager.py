@@ -10,6 +10,8 @@ class AIModelManager:
     def detect_species(self):
         return LabelImage(model_file="models/detect_species.pb",
                           label_file="models/detect_species.txt",
+                          input_layer="input",
+                          output_layer="final_result",
                           filename=self.filename).run()
 
     def detect_maturation(self):
@@ -18,6 +20,7 @@ class AIModelManager:
                               label_file=f"models/maturity_{self.species}.txt",
                               input_layer="Placeholder",
                               output_layer="final_result",
+
                               filename=self.filename).run()
         return None, None
 

@@ -12,6 +12,8 @@ class AIModelManager:
                           label_file="models/detect_species.txt",
                           input_layer="input",
                           output_layer="final_result",
+                          input_height=299,
+                          input_width=299,
                           filename=self.filename).run()
 
     def detect_maturation(self):

@@ -16,7 +16,7 @@ class TemperatureSensor:
 
     def set_min_max(self, min_temperature, max_temperature):
         self.heater.add_condition(
-            lambda temperature, c_type: min_temperature < temperature < max_temperature and c_type == 'temperature')
+            lambda temperature, c_type: min_temperature > temperature and c_type == 'temperature')
 
     def unset_min_max(self):
         self.heater.reset()

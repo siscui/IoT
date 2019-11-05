@@ -19,9 +19,9 @@ if __name__ == '__main__':
     def on_snapshot(doc_snapshot, changes, read_time):
         for doc in doc_snapshot:
             data = doc.to_dict()
-            pump_state = data['pump']['state']
             lamp_state = data['lamp']['state']
             heater_state = data['heater']['state']
+            pump_state = data['pump']['state']
             print(f'Received document snapshot: {doc.id}. Pump: {pump_state} Lamp: {lamp_state} Heater: {heater_state}')
             humidity_sensor.set_pump_state(pump_state)
             photo_sensor.set_lamp_state(lamp_state)
@@ -31,6 +31,9 @@ if __name__ == '__main__':
     spi.open(0, 0)
     spi.max_speed_hz = 1000000
     GPIO.setmode(GPIO.BOARD)
+    GPIO.setwarnings(False)
+    # LED Azul de Prendido
+    GPIO.setup(38, GPIO.OUT, initial=1)
 
     min_max_per_plant = json.load(codecs.open('min_max.json', 'r', 'utf-8-sig'))
     cred = './credentials.json'

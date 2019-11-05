@@ -25,6 +25,8 @@ class SensorDataUploader:
                         firebase_data[database]['values'].append(data)
                 self.db.set(database, {'uploaded': 1}, "uploaded = 0")
                 amount_processed += len(formatted_data)
+            else:
+                print("No hay lecturas para subir.")
         self.fsm.set(firebase_data)
         self.amount_processed = amount_processed
         self.timestamp = int(time())

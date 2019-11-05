@@ -15,7 +15,7 @@ class HumiditySensor:
 
     def set_min_max(self, min_humidity, max_humidity):
         self.pump.add_condition(
-            lambda humidity, c_type: min_humidity < humidity < max_humidity and c_type == 'humidity')
+            lambda humidity, c_type: min_humidity > humidity and c_type == 'humidity')
 
     def unset_min_max(self):
         self.pump.reset()

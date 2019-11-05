@@ -20,7 +20,7 @@ class AIModelManager:
         if self.species == 'tomate' or self.species == 'morron':
             return LabelImage(model_file=f"models/maturity_{self.species}.pb",
                               label_file=f"models/maturity_{self.species}.txt",
-                              input_layer="Placeholder",
+                              input_layer="input",
                               output_layer="final_result",
                               filename=self.filename).run()
         return None, None

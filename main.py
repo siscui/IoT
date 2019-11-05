@@ -121,4 +121,4 @@ if __name__ == '__main__':
                 query_watch.unsubscribe()
                 query_watch = None
 
-        sleep(120)
+        sleep(2)

@@ -92,4 +92,4 @@ class LabelImage:
         results = np.squeeze(results)
         labels = self.load_labels()
 
-        return labels[0], results[0]
+        return labels[np.amax(results)], np.max(results)

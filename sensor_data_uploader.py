@@ -1,13 +1,10 @@
-from threading import Thread
-from time import sleep, time
+from time import time
 
 
-class SensorDataUploader(Thread):
-    def __init__(self, conn, fsm, interval):
-        Thread.__init__(self)
+class SensorDataUploader:
+    def __init__(self, conn, fsm):
         self.db = conn
         self.fsm = fsm
-        self.interval = interval
         self.amount_processed = None
         self.timestamp = None
 
@@ -17,7 +14,10 @@ class SensorDataUploader(Thread):
         for database in ['temperature', 'humidity', 'illumination', 'plant']:
             db_data = self.db.get(database, "uploaded = 0 order by id asc")
             if len(db_data) > 0:
-                formatted_data = list(map(lambda id, value, status, timestamp, uploaded: { 'value': value, f"{'growth' if database == 'plant' else 'status'}": status, 'timestamp': timestamp }, *zip(*db_data)))
+                formatted_data = list(map(lambda _id, value, status, timestamp, uploaded: {
+                                                            'value': value,
+                                                            f"{'growth' if database == 'plant' else 'status'}": status,
+                                                            'timestamp': timestamp}, *zip(*db_data)))
                 for data in formatted_data:
                     if database == 'plant':
                         firebase_data[database].append(data)
@@ -33,7 +33,5 @@ class SensorDataUploader(Thread):
         print(f"[SensorDataUploader] Amount Processed: {self.amount_processed} - Timestamp: {self.timestamp}")
 
     def run(self):
-        while True:
-            self.upload_data()
-            self.log()
-            sleep(self.interval)
+        self.upload_data()
+        self.log()

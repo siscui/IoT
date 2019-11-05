@@ -19,4 +19,4 @@ class FirestoreManager:
         return self.doc_ref.get().to_dict()
 
     def on_snapshot(self, handler):
-        self.doc_ref.on_snapshot(handler)
+        return self.doc_ref.on_snapshot(handler)

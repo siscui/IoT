@@ -22,6 +22,8 @@ class AIModelManager:
                               label_file=f"models/maturity_{self.species}.txt",
                               input_layer="input",
                               output_layer="final_result",
+                              input_width=160,
+                              input_height=160,
                               filename=self.filename).run()
         return None, None
 

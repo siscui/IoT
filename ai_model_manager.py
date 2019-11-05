@@ -26,10 +26,10 @@ class AIModelManager:
         if self.species == 'tomate' or self.species == 'morron':
             return LabelImage(model_file=f"models/maturity_{self.species}.pb",
                               label_file=f"models/maturity_{self.species}.txt",
-                              input_layer=f"{'Placeholder' if self.species == 'morron' else 'input'}",
+                              input_layer="input",
                               output_layer="final_result",
-                              input_width=299 if self.species == 'morron' else 160,
-                              input_height=299 if self.species == 'morron' else 160,
+                              input_width=160,
+                              input_height=160,
                               filename=self.filename).run()
         tot = datetime.datetime.now() - t1
         print(f"{round(tot.total_seconds(),1)} seg.")
@@ -40,4 +40,5 @@ class AIModelManager:
         self.species, percentage = self.detect_species()
         print(self.species)
         _, maturity = self.detect_maturation()
+        print(maturity)
         return self.species, percentage, maturity

@@ -18,11 +18,7 @@ class ImageProcessor:
         self.last_photo = self.camera.take_photo()
 
     def analyze_photo(self):
-        print('Analizando imagen ...')
-        t1 = datetime.datetime.now()
         self.species, self.percentage, self.maturity = self.ai.analyze(self.last_photo)
-        tot = datetime.datetime.now() - t1
-        print(f"{round(tot.total_seconds(),1)} seg.")
 
     def save(self):
         self.timestamp = self.conn.save('PLANT', {'species': self.species, 'maturity': self.maturity})

@@ -25,10 +25,10 @@ class AIModelManager:
                               input_width=160,
                               input_height=160,
                               filename=self.filename).run()
-        return None, None
+        return None, 0
 
     def analyze(self, filename):
         self.filename = filename
         self.species, percentage = self.detect_species()
-        _, maturity = self.detect_maturation()
-        return self.species, percentage, maturity
+        label, maturity = self.detect_maturation()
+        return self.species, percentage, 1 - maturity if label == 'no' else maturity

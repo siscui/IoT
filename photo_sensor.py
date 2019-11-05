@@ -14,7 +14,7 @@ class PhotoSensor:
         self.force = False
 
     def set_min_max(self, min_illumination, max_illumination):
-        self.lamp.add_condition(lambda photo, c_type: min_illumination > photo < max_illumination and c_type == 'photo')
+        self.lamp.add_condition(lambda photo, c_type: min_illumination < photo < max_illumination and c_type == 'photo')
 
     def unset_min_max(self):
         self.lamp.reset()

@@ -22,7 +22,7 @@ if __name__ == '__main__':
             pump_state = data['pump']['state']
             lamp_state = data['lamp']['state']
             heater_state = data['heater']['state']
-            print(f'Received document snapshot: {doc.id}. Pump: {pump_state} Lamp: {lamp_state} Heater {heater_state}')
+            print(f'Received document snapshot: {doc.id}. Pump: {pump_state} Lamp: {lamp_state} Heater: {heater_state}')
             humidity_sensor.set_pump_state(pump_state)
             photo_sensor.set_lamp_state(lamp_state)
             temperature_sensor.set_heater_state(heater_state)

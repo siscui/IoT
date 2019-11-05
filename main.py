@@ -5,6 +5,7 @@ import RPi.GPIO as GPIO
 from uuid import getnode
 from time import sleep
 
+from power_supply_sensor import PowerSupplySensor
 from humidity_sensor import HumiditySensor
 from photo_sensor import PhotoSensor
 from temperature_sensor import TemperatureSensor
@@ -41,6 +42,7 @@ if __name__ == '__main__':
     conn = DbConnection(db_name='local.db')
     fsm = FirestoreManager(cred=cred, col_name='crops')
 
+    power_sensor = PowerSupplySensor(pin=36, conn=conn)
     image_processor = ImageProcessor(conn=conn)
     photo_sensor = PhotoSensor(spi=spi, conn=conn, lamp_pin=22, pin=0)
     humidity_sensor = HumiditySensor(spi=spi, conn=conn, pump_pin=18, pin=1)
@@ -71,6 +73,9 @@ if __name__ == '__main__':
                 photo_sensor.set_min_max(min_illumination=min_illumination, max_illumination=max_illumination)
                 humidity_sensor.set_min_max(min_humidity=min_humidity, max_humidity=max_humidity)
                 temperature_sensor.set_min_max(min_temperature=min_temperature, max_temperature=max_temperature)
+
+                power_sensor.run()
+                power_sensor.log() # Comentar para PROD
 
                 results = conn.get('firestore_docs', f"PLANT = '{species}' ORDER BY ID DESC LIMIT 1")
                 if len(results) == 0:
@@ -112,6 +117,8 @@ if __name__ == '__main__':
                 query_watch = fsm.on_snapshot(on_snapshot)
 
             doc_dict = fsm.get()
+            power_sensor.run()
+            power_sensor.log() # Comentar en PROD
             photo_sensor.run(force=doc_dict['lamp']['force'])
             humidity_sensor.run(force=doc_dict['pump']['force'])
             temperature_sensor.run(force=doc_dict['heater']['force'])

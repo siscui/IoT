@@ -1,14 +1,16 @@
 import RPi.GPIO as GPIO
+from time import sleep
 
 ON_STATE = 0
 OFF_STATE = 1
 
 
 class DeviceController:
-    def __init__(self, pin):
+    def __init__(self, pin, duration=None):
         self.pin = pin
         self.state = 0
         self.conditions = []
+        self.duration = duration
         GPIO.setwarnings(False)
         GPIO.setup(self.pin, GPIO.OUT, initial=1)
 
@@ -30,3 +32,7 @@ class DeviceController:
     def set_state(self, state):
         GPIO.output(self.pin, state)
         self.state = state
+        if self.duration is not None and state == ON_STATE:
+            sleep(self.duration)
+            GPIO.output(self.pin, OFF_STATE)
+            self.state = OFF_STATE

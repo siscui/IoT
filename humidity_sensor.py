@@ -7,7 +7,7 @@ class HumiditySensor:
         self.pin = pin
         self.spi = spi
         self.conn = conn
-        self.pump = DeviceController(pin=pump_pin)
+        self.pump = DeviceController(pin=pump_pin, duration=5)
         self.value = None
         self.status = None
         self.timestamp = None

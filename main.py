@@ -41,6 +41,7 @@ if __name__ == '__main__':
 
     conn = DbConnection(db_name='local.db')
     fsm = FirestoreManager(cred=cred, col_name='crops')
+    mnt = FirestoreManager(cred=cred, col_name='monitor')
 
     power_sensor = PowerSupplySensor(pin=36, conn=conn)
     image_processor = ImageProcessor(conn=conn)
@@ -56,6 +57,12 @@ if __name__ == '__main__':
         species, _, _ = image_processor.run()
 
         if species != 'vacio':
+
+            if prev_species != species:
+                mnt.retrieve_doc(doc_id='plants')
+                data = mnt.get()
+                data['values'].append(species)
+                mnt.set(data)
 
             # If it's the first run, or species changed
             if query_watch is None or (species != prev_species and prev_species is not None):

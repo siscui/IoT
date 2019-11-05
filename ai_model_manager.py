@@ -25,7 +25,7 @@ class AIModelManager:
                               input_width=160,
                               input_height=160,
                               filename=self.filename).run()
-        return None, None
+        return None, 0
 
     def analyze(self, filename):
         self.filename = filename
@@ -37,8 +37,8 @@ class AIModelManager:
         print(self.species)
         print("Detectar maduracion ...")
         t1 = datetime.datetime.now()
-        _, maturity = self.detect_maturation()
+        label, maturity = self.detect_maturation()
         tot = datetime.datetime.now() - t1
         print(f"{round(tot.total_seconds(),1)} seg.")
         print(maturity)
-        return self.species, percentage, maturity
+        return self.species, percentage, 1 - maturity if label == 'no' else maturity

@@ -27,9 +27,9 @@ class SensorDataUploader:
                 amount_processed += len(formatted_data)
             else:
                 print("No hay lecturas para subir.")
-        firebase_data.lamp.state = lamp_state
-        firebase_data.heater.state = heater_state
-        firebase_data.pump.state = pump_state
+        firebase_data['lamp']['state'] = lamp_state
+        firebase_data['heater']['state'] = heater_state
+        firebase_data['pump']['state'] = pump_state
         self.fsm.set(firebase_data)
         self.amount_processed = amount_processed
         self.timestamp = int(time())

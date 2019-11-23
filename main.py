@@ -129,12 +129,12 @@ if __name__ == '__main__':
             doc_dict = fsm.get()
             power_sensor.run()
             power_sensor.log() # Comentar en PROD
-            photo_sensor.run(force=doc_dict['lamp']['force'])
-            humidity_sensor.run(force=doc_dict['pump']['force'])
-            temperature_sensor.run(force=doc_dict['heater']['force'])
-            sensor_data_uploader.run(pump_state=humidity_sensor.get_pump_state(),
-                                     lamp_state=photo_sensor.get_lamp_state(),
-                                     heater_state=temperature_sensor.get_heater_state())
+            pump_state = humidity_sensor.run(force=doc_dict['pump']['force'])
+            lamp_state = photo_sensor.run(force=doc_dict['lamp']['force'])
+            heater_state = temperature_sensor.run(force=doc_dict['heater']['force'])
+            sensor_data_uploader.run(pump_state=pump_state,
+                                     lamp_state=lamp_state,
+                                     heater_state=heater_state)
         else:
             if query_watch is not None:
                 photo_sensor.unset_min_max()

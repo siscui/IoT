@@ -53,3 +53,4 @@ class HumiditySensor:
         self.read()
         self.save()
         self.log()
+        return self.get_pump_state()

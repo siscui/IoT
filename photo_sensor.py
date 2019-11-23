@@ -52,3 +52,4 @@ class PhotoSensor:
         self.read()
         self.save()
         self.log()
+        return self.get_lamp_state()

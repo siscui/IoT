@@ -20,8 +20,8 @@ class HumiditySensor:
     def unset_min_max(self):
         self.pump.reset()
 
-    def set_pump_state(self, state):
-        if self.force is False:
+    def set_pump_state(self, state, force=False):
+        if force is False:
             self.pump.set_state(state)
 
     def get_pump_state(self):

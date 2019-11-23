@@ -21,8 +21,8 @@ class TemperatureSensor:
     def unset_min_max(self):
         self.heater.reset()
 
-    def set_heater_state(self, state):
-        if self.force is False:
+    def set_heater_state(self, state, force=False):
+        if force is False:
             self.heater.set_state(state)
 
     def get_heater_state(self):

@@ -23,11 +23,7 @@ class DeviceController:
     def verify_conditions(self, value, c_type):
         for condition in self.conditions:
             if condition(value, c_type):
-                # return self.set_state(ON_STATE)
-                self.set_state(ON_STATE)
-            else:
-                self.set_state(OFF_STATE)
-            return
+                return self.set_state(ON_STATE)
         self.set_state(OFF_STATE)
 
     def get_state(self):

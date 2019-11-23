@@ -8,7 +8,7 @@ class SensorDataUploader:
         self.amount_processed = None
         self.timestamp = None
 
-    def upload_data(self):
+    def upload_data(self, lamp_state, heater_state, pump_state):
         firebase_data = self.fsm.get()
         amount_processed = 0
         for database in ['temperature', 'humidity', 'illumination', 'plant']:
@@ -27,6 +27,9 @@ class SensorDataUploader:
                 amount_processed += len(formatted_data)
             else:
                 print("No hay lecturas para subir.")
+        firebase_data.lamp.state = lamp_state
+        firebase_data.heater.state = heater_state
+        firebase_data.pump.state = pump_state
         self.fsm.set(firebase_data)
         self.amount_processed = amount_processed
         self.timestamp = int(time())
@@ -34,6 +37,6 @@ class SensorDataUploader:
     def log(self):
         print(f"[SensorDataUploader] Amount Processed: {self.amount_processed} - Timestamp: {self.timestamp}")
 
-    def run(self):
-        self.upload_data()
+    def run(self, lamp_state, heater_state, pump_state):
+        self.upload_data(lamp_state, heater_state, pump_state)
         self.log()

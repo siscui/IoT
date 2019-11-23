@@ -132,7 +132,9 @@ if __name__ == '__main__':
             photo_sensor.run(force=doc_dict['lamp']['force'])
             humidity_sensor.run(force=doc_dict['pump']['force'])
             temperature_sensor.run(force=doc_dict['heater']['force'])
-            sensor_data_uploader.run()
+            sensor_data_uploader.run(pump_state=humidity_sensor.get_pump_state(),
+                                     lamp_state=photo_sensor.get_lamp_state(),
+                                     heater_state=temperature_sensor.get_heater_state())
         else:
             if query_watch is not None:
                 photo_sensor.unset_min_max()

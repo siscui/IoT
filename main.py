@@ -23,10 +23,13 @@ if __name__ == '__main__':
     def on_snapshot(doc_snapshot, changes, read_time):
         for doc in doc_snapshot:
             data = doc.to_dict()
+            pump_state = data['pump']['state']
+            lamp_state = data['lamp']['state']
+            heater_state = data['heater']['state']
             print(f'Received document snapshot: {doc.id}. Pump: {pump_state} Lamp: {lamp_state} Heater: {heater_state}')
-            humidity_sensor.set_pump_state(data['pump']['state'], data['pump']['force'])
-            photo_sensor.set_lamp_state(data['lamp']['state'], data['lamp']['force'])
-            temperature_sensor.set_heater_state(data['heater']['state'], data['heater']['force'])
+            humidity_sensor.set_pump_state(pump_state, data['pump']['force'])
+            photo_sensor.set_lamp_state(lamp_state, data['lamp']['force'])
+            temperature_sensor.set_heater_state(heater_state, data['heater']['force'])
 
     spi = spidev.SpiDev()
     spi.open(0, 0)

@@ -26,10 +26,16 @@ if __name__ == '__main__':
             lamp_state = data['lamp']['state']
             heater_state = data['heater']['state']
             pump_state = data['pump']['state']
+            heater_force = doc_dict['heater']['force']
+            lamp_force = doc_dict['lamp']['force']
+            pump_force = doc_dict['pump']['force']
             print(f'Received document snapshot: {doc.id}. Pump: {pump_state} Lamp: {lamp_state} Heater: {heater_state}')
-            humidity_sensor.set_pump_state(pump_state)
-            photo_sensor.set_lamp_state(lamp_state)
-            temperature_sensor.set_heater_state(heater_state)
+            if heater_force is False:
+                humidity_sensor.set_pump_state(pump_state)
+            if lamp_force is False:
+                photo_sensor.set_lamp_state(lamp_state)
+            if pump_force is False:
+                temperature_sensor.set_heater_state(heater_state)
 
     spi = spidev.SpiDev()
     spi.open(0, 0)

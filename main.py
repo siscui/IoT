@@ -5,6 +5,9 @@ import RPi.GPIO as GPIO
 from uuid import getnode
 from time import sleep
 
+import firebase_admin
+from firebase_admin import credentials
+
 from power_supply_sensor import PowerSupplySensor
 from humidity_sensor import HumiditySensor
 from photo_sensor import PhotoSensor
@@ -38,7 +41,7 @@ if __name__ == '__main__':
 
     min_max_per_plant = json.load(codecs.open('min_max.json', 'r', 'utf-8-sig'))
     cred = './credentials.json'
-
+    firebase_admin.initialize_app(credentials.Certificate(cred))
     conn = DbConnection(db_name='local.db')
     fsm = FirestoreManager(cred=cred, col_name='crops')
     mnt = FirestoreManager(cred=cred, col_name='monitor')

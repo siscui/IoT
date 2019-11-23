@@ -4,7 +4,7 @@ from firebase_admin import credentials, firestore
 
 class FirestoreManager:
     def __init__(self, cred, col_name):
-        firebase_admin.initialize_app(credentials.Certificate(cred))
+        #firebase_admin.initialize_app(credentials.Certificate(cred))
         self.col_ref = firestore.client().collection(col_name)
         self.doc_ref = None
 

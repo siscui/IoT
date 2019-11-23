@@ -36,7 +36,8 @@ class TemperatureSensor:
                 self.status = 'INCOHERENT_READ'
             else:
                 self.status = 'OK'
-                self.heater.verify_conditions(self.value, 'temperature')
+                if self.force is False:
+                    self.heater.verify_conditions(self.value, 'temperature')
         else:
             self.status = 'FAILED_TO_RETRIEVE'
         return self.value, self.status

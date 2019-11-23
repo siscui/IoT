@@ -37,7 +37,8 @@ class HumiditySensor:
             else:
                 self.value = round(50 * (cos(pi * self.value / 1023) + 1))
                 self.status = 'OK'
-                self.pump.verify_conditions(self.value, 'humidity')
+                if self.force is False:
+                    self.pump.verify_conditions(self.value, 'humidity')
         else:
             self.status = 'FAILED_TO_RETRIEVE'
         return self.value, self.status

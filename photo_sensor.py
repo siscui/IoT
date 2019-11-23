@@ -36,7 +36,8 @@ class PhotoSensor:
             else:
                 self.status = 'OK'
                 self.value = round(50 * (cos(pi * self.value / 1023) + 1))
-                self.lamp.verify_conditions(self.value, 'photo')
+                if self.force is False:
+                    self.lamp.verify_conditions(self.value, 'photo')
         else:
             self.status = 'CANNOT_READ_LDR'
         return self.value, self.status

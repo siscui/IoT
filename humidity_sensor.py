@@ -40,7 +40,7 @@ class HumiditySensor:
                     self.pump.set_duration(5)
                     self.pump.verify_conditions(self.value, 'humidity')
                 else:
-                    self.pump.set_duration(0)
+                    self.pump.set_duration(None)
         else:
             self.status = 'FAILED_TO_RETRIEVE'
         return self.value, self.status

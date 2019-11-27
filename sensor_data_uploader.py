@@ -7,6 +7,7 @@ class SensorDataUploader:
         self.fsm = fsm
         self.amount_processed = None
         self.timestamp = None
+        self.updated = False
 
     def upload_data(self, lamp_state, heater_state, pump_state):
         firebase_data = self.fsm.get()
@@ -34,9 +35,16 @@ class SensorDataUploader:
         self.amount_processed = amount_processed
         self.timestamp = int(time())
 
+    def is_updated(self):
+        return self.updated
+
+    def set_updated(self, value):
+        self.updated = value
+
     def log(self):
         print(f"[SensorDataUploader] Amount Processed: {self.amount_processed} - Timestamp: {self.timestamp}")
 
     def run(self, lamp_state, heater_state, pump_state):
         self.upload_data(lamp_state, heater_state, pump_state)
         self.log()
+        self.updated = True

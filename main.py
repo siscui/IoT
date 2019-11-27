@@ -21,14 +21,19 @@ if __name__ == '__main__':
 
     def on_snapshot(doc_snapshot, changes, read_time):
         for doc in doc_snapshot:
-            data = doc.to_dict()
-            pump_state = data['pump']['state']
-            lamp_state = data['lamp']['state']
-            heater_state = data['heater']['state']
-            print(f'Received document snapshot: {doc.id}. Pump: {pump_state} Lamp: {lamp_state} Heater: {heater_state}')
-            humidity_sensor.set_pump_state(pump_state, data['pump']['force'])
-            photo_sensor.set_lamp_state(lamp_state, data['lamp']['force'])
-            temperature_sensor.set_heater_state(heater_state, data['heater']['force'])
+            d = doc.to_dict()
+            if not sensor_data_uploader.is_updated():
+                # Document update has been triggered by front
+                p_state = d['pump']['state']
+                l_state = d['lamp']['state']
+                h_state = d['heater']['state']
+                print(f'Received document snapshot: {doc.id}. Pump: {p_state} Lamp: {l_state} Heater: {h_state}')
+                humidity_sensor.set_pump_state(p_state, d['pump']['force'])
+                photo_sensor.set_lamp_state(l_state, d['lamp']['force'])
+                temperature_sensor.set_heater_state(h_state, d['heater']['force'])
+            else:
+                # Catch document update by device
+                sensor_data_uploader.set_updated(False)
 
 
     spi = spidev.SpiDev()

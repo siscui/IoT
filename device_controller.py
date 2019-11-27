@@ -14,6 +14,9 @@ class DeviceController:
         GPIO.setwarnings(False)
         GPIO.setup(self.pin, GPIO.OUT, initial=1)
 
+    def set_duration(self, duration):
+        self.duration = duration
+
     def add_condition(self, condition):
         self.conditions.append(condition)
 

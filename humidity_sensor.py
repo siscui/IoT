@@ -7,7 +7,7 @@ class HumiditySensor:
         self.pin = pin
         self.spi = spi
         self.conn = conn
-        self.pump = DeviceController(pin=pump_pin, duration=5)
+        self.pump = DeviceController(pin=pump_pin)
         self.value = None
         self.status = None
         self.timestamp = None
@@ -37,7 +37,10 @@ class HumiditySensor:
                 self.value = round(50 * (cos(pi * self.value / 1023) + 1))
                 self.status = 'OK'
                 if self.force is False:
+                    self.pump.set_duration(5)
                     self.pump.verify_conditions(self.value, 'humidity')
+                else:
+                    self.pump.set_duration(0)
         else:
             self.status = 'FAILED_TO_RETRIEVE'
         return self.value, self.status

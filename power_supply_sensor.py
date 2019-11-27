@@ -1,5 +1,6 @@
 import RPi.GPIO as GPIO
 
+
 class PowerSupplySensor:
     def __init__(self, pin, conn):
         self.pin = pin

@@ -17,7 +17,6 @@ from db_connection import DbConnection
 from firestore_manager import FirestoreManager
 from sensor_data_uploader import SensorDataUploader
 
-
 if __name__ == '__main__':
 
     def on_snapshot(doc_snapshot, changes, read_time):
@@ -30,6 +29,7 @@ if __name__ == '__main__':
             humidity_sensor.set_pump_state(pump_state, data['pump']['force'])
             photo_sensor.set_lamp_state(lamp_state, data['lamp']['force'])
             temperature_sensor.set_heater_state(heater_state, data['heater']['force'])
+
 
     spi = spidev.SpiDev()
     spi.open(0, 0)
@@ -73,7 +73,7 @@ if __name__ == '__main__':
                     photo_sensor.unset_min_max()
                     humidity_sensor.unset_min_max()
                     temperature_sensor.unset_min_max()
-                   ## query_watch.unsubscribe()
+                    query_watch.unsubscribe()
                     query_watch = None
 
                 min_temperature, max_temperature = min_max_per_plant[species]['temperature'].values()
@@ -85,7 +85,7 @@ if __name__ == '__main__':
                 temperature_sensor.set_min_max(min_temperature=min_temperature, max_temperature=max_temperature)
 
                 power_sensor.run()
-                power_sensor.log() # Comentar para PROD
+                power_sensor.log()  # Comentar para PROD
 
                 results = conn.get('firestore_docs', f"PLANT = '{species}' ORDER BY ID DESC LIMIT 1")
                 if len(results) == 0:
@@ -128,7 +128,7 @@ if __name__ == '__main__':
 
             doc_dict = fsm.get()
             power_sensor.run()
-            power_sensor.log() # Comentar en PROD
+            power_sensor.log()  # Comentar en PROD
             pump_state = humidity_sensor.run(force=doc_dict['pump']['force'])
             lamp_state = photo_sensor.run(force=doc_dict['lamp']['force'])
             heater_state = temperature_sensor.run(force=doc_dict['heater']['force'])
@@ -140,7 +140,7 @@ if __name__ == '__main__':
                 photo_sensor.unset_min_max()
                 humidity_sensor.unset_min_max()
                 temperature_sensor.unset_min_max()
-                ## query_watch.unsubscribe()
+                query_watch.unsubscribe()
                 query_watch = None
 
         sleep(2)

@@ -75,7 +75,7 @@ if __name__ == '__main__':
                     photo_sensor.unset_min_max()
                     humidity_sensor.unset_min_max()
                     temperature_sensor.unset_min_max()
-                    query_watch.unsubscribe()
+                    # query_watch.unsubscribe()
                     query_watch = None
 
                 min_temperature, max_temperature = min_max_per_plant[species]['temperature'].values()
@@ -149,7 +149,7 @@ if __name__ == '__main__':
                 photo_sensor.unset_min_max()
                 humidity_sensor.unset_min_max()
                 temperature_sensor.unset_min_max()
-                query_watch.unsubscribe()
+                # query_watch.unsubscribe()
                 query_watch = None
 
         sleep(2)

@@ -54,6 +54,7 @@ if __name__ == '__main__':
     sensor_data_uploader = SensorDataUploader(conn=conn, fsm=fsm)
     query_watch = None
     species = None
+    doc_id = None
 
     while True:
         prev_species = species

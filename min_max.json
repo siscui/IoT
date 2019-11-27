@@ -57,12 +57,12 @@
 	},
 	"cactus": {
 		"temperature": {
-			"min": 5,
+			"min": 15,
 			"max": 50
 		},
 		"humidity": {
 			"min": 20,
-			"max": 50
+			"max": 40
 		},
 		"illumination": {
 			"min": 40,

@@ -28,9 +28,9 @@ if __name__ == '__main__':
             if not sensor_data_uploader.is_updated():
                 # Document update has been triggered by front
                 print(f'Received document snapshot (WEB): {doc.id}. Pump: {p_state} Lamp: {l_state} Heater: {h_state}')
-                humidity_sensor.set_pump_state(p_state, d['pump']['force'])
-                photo_sensor.set_lamp_state(l_state, d['lamp']['force'])
-                temperature_sensor.set_heater_state(h_state, d['heater']['force'])
+                humidity_sensor.set_pump_state(p_state)
+                photo_sensor.set_lamp_state(l_state)
+                temperature_sensor.set_heater_state(h_state)
             else:
                 # Catch document update by device
                 print(f'Received document snapshot (DEVICE): {doc.id}. Pump: {p_state} Lamp: {l_state} Heater: {h_state}')

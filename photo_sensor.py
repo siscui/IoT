@@ -19,9 +19,8 @@ class PhotoSensor:
     def unset_min_max(self):
         self.lamp.reset()
 
-    def set_lamp_state(self, state, force):
-        if force is False:
-            self.lamp.set_state(state)
+    def set_lamp_state(self, state):
+        self.lamp.set_state(state)
 
     def get_lamp_state(self):
         return self.lamp.get_state()

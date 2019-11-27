@@ -62,9 +62,10 @@ if __name__ == '__main__':
         if species != 'vacio':
 
             if prev_species != species:
-                mnt.retrieve_doc(doc_id='plants')
+                mnt.retrieve_doc(doc_id='plant')
                 data = mnt.get()
-                data['values'].append(species)
+                data['name'] = species
+                data['doc_id'] = doc_id
                 mnt.set(data)
 
             # If it's the first run, or species changed
@@ -119,7 +120,8 @@ if __name__ == '__main__':
                             'max': max_illumination,
                             'values': []
                         },
-                        'plant': []
+                        'plant': [],
+                        'status': True
                     })
                     conn.save('firestore_docs', {'doc_id': doc_id, 'plant': species})
                 else:

@@ -22,11 +22,11 @@ if __name__ == '__main__':
     def on_snapshot(doc_snapshot, changes, read_time):
         for doc in doc_snapshot:
             d = doc.to_dict()
+            p_state = d['pump']['state']
+            l_state = d['lamp']['state']
+            h_state = d['heater']['state']
             if not sensor_data_uploader.is_updated():
                 # Document update has been triggered by front
-                p_state = d['pump']['state']
-                l_state = d['lamp']['state']
-                h_state = d['heater']['state']
                 print(f'Received document snapshot (WEB): {doc.id}. Pump: {p_state} Lamp: {l_state} Heater: {h_state}')
                 humidity_sensor.set_pump_state(p_state, d['pump']['force'])
                 photo_sensor.set_lamp_state(l_state, d['lamp']['force'])

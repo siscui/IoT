@@ -45,6 +45,7 @@ if __name__ == '__main__':
     conn = DbConnection(db_name='local.db')
     fsm = FirestoreManager(cred=cred, col_name='crops')
     mnt = FirestoreManager(cred=cred, col_name='monitor')
+    mnt.retrieve_doc(doc_id='plant')
 
     power_sensor = PowerSupplySensor(pin=36, conn=conn)
     image_processor = ImageProcessor(conn=conn)
@@ -52,22 +53,15 @@ if __name__ == '__main__':
     humidity_sensor = HumiditySensor(spi=spi, conn=conn, pump_pin=18, pin=1)
     temperature_sensor = TemperatureSensor(conn=conn, heater_pin=11, pin=22)
     sensor_data_uploader = SensorDataUploader(conn=conn, fsm=fsm)
+
     query_watch = None
     species = None
-    doc_id = None
 
     while True:
         prev_species = species
         species, _, _ = image_processor.run()
 
         if species != 'vacio':
-
-            if prev_species != species:
-                mnt.retrieve_doc(doc_id='plant')
-                data = mnt.get()
-                data['name'] = species
-                data['doc_id'] = doc_id
-                mnt.set(data)
 
             # If it's the first run, or species changed
             if query_watch is None or (species != prev_species and prev_species is not None):
@@ -126,7 +120,13 @@ if __name__ == '__main__':
                     })
                     conn.save('firestore_docs', {'doc_id': doc_id, 'plant': species})
                 else:
-                    fsm.retrieve_doc(doc_id=results[0][1])
+                    doc_id = results[0][1]
+                    fsm.retrieve_doc(doc_id=doc_id)
+                data = mnt.get()
+                data['name'] = species
+                data['doc_id'] = doc_id
+                mnt.set(data)
+
                 query_watch = fsm.on_snapshot(on_snapshot)
 
             doc_dict = fsm.get()

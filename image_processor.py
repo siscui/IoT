@@ -21,7 +21,7 @@ class ImageProcessor:
         self.species, self.percentage, self.maturity = self.ai.analyze(self.last_photo)
 
     def save(self):
-        self.timestamp = self.conn.save('PLANT', {'species': self.species, 'maturity': self.maturity})
+        self.timestamp = self.conn.save('PLANT', {'species': self.species, 'maturity': round(self.maturity,2)})
 
     def log(self):
         print(f"[ImageProcessor] Plant: {self.species} - Percentage: {self.percentage} - Maturity: {self.maturity} - "
